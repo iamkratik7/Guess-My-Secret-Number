@@ -108,6 +108,42 @@ So if we click on the button check without enetering any value now, indeed, we g
 
 */
 
+const modal = document.querySelector('.modal');
+
+const overlay = document.querySelector('.overlay');
+
+const btnCloseModal = document.querySelector('.close-modal');
+
+//make function for same code
+const closeModal = function () {
+  modal.classList.add('hidden');
+  overlay.classList.add('hidden');
+};
+
+//make function for same code
+const openModal = function () {
+  modal.classList.remove('hidden');
+  overlay.classList.remove('hidden');
+};
+
+// attaching click event handler so that we can close modal window
+btnCloseModal.addEventListener('click', closeModal);
+overlay.addEventListener('click', closeModal);
+
+//listening to keypress event for 'esc' button
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+    closeModal();
+  }
+});
+
+/* FUNCTION FOR DUPLICATE CODES */
+
+const displayMessage = function (message) {
+  document.querySelector('.message').textContent = message;
+};
+
 /* DEFINING SECRET NUMBER BELOW: */
 
 let secretNumber = Math.trunc(Math.random() * 20) + 1;
@@ -122,7 +158,7 @@ CHECK BOOKMARK 3!
 
 */
 
-let highscore = 0;
+let highscore = 0; // now CHECK BOOKMARK 5
 
 /* Let's actually display the number but in real game it will be hidden! */
 
@@ -134,10 +170,13 @@ document.querySelector('.check').addEventListener('click', function () {
   /* when no value entered */
   if (!guess) {
     /* Now we need to change the textContent of message as below then it will be rendered! */
-    document.querySelector('.message').textContent = '⛔No number!';
+    displayMessage('⛔No number!');
   } else if (guess === secretNumber) {
     /* What if there is actually a guess equals to our secretNumber */
-    document.querySelector('.message').textContent = '🎉Correct Number!';
+    displayMessage('🎉Correct Number!');
+    document.querySelector('.modal-message').textContent =
+      '🎉Correct Number!🎉';
+    openModal();
     /* manipulating styles when player wins this all will set inline style to html and not in original css files remember that! */
 
     document.querySelector('#wrapper').style.background =
@@ -150,29 +189,20 @@ document.querySelector('.check').addEventListener('click', function () {
       highscore = score;
       document.querySelector('.highscore').textContent = highscore;
     }
-  } else if (guess > secretNumber) {
+  } else if (guess !== secretNumber) {
     if (score > 1) {
       /* if guess greater than the secretNumber */
-      document.querySelector('.message').textContent = '🤦Too High!';
+
+      displayMessage(guess > secretNumber ? '🤦Too High!' : '🤦Too low!');
       score--;
       document.querySelector('.score').textContent = score;
     } else {
       document.querySelector('#wrapper').style.background =
         'radial-gradient(circle, rgba(255,188,188,1) 4%, rgba(255,170,170,1) 12%, rgba(255,0,0,0.6330240714449842) 89%)';
-      document.querySelector('.message').textContent = '🙇‍♂️Game Over!';
+      displayMessage('🙇‍♂️Game Over!');
       document.querySelector('.score').textContent = 0;
-    }
-  } else if (guess < secretNumber) {
-    if (score > 1) {
-      /* if guess smaller than the secretNumber */
-      document.querySelector('.message').textContent = '🤦Too Low!';
-      score--;
-      document.querySelector('.score').textContent = score;
-    } else {
-      document.querySelector('#wrapper').style.background =
-        'radial-gradient(circle, rgba(255,188,188,1) 4%, rgba(255,170,170,1) 12%, rgba(255,0,0,0.6330240714449842) 89%)';
-      document.querySelector('.message').textContent = '🙇‍♂️Game Over!';
-      document.querySelector('.score').textContent = 0;
+      document.querySelector('.modal-message').textContent = '⛔GAME OVER⛔';
+      openModal();
     }
   }
 });
@@ -212,7 +242,7 @@ document.querySelector('.again').addEventListener('click', function () {
     'radial-gradient(circle, rgba(254, 211, 188, 1) 0%, rgba(248, 161, 156, 1) 71%)';
   score = 20;
   secretNumber = Math.trunc(Math.random() * 20) + 1;
-  document.querySelector('.message').textContent = 'Start guessing...';
+  displayMessage('Start guessing...');
   document.querySelector('.score').textContent = score;
   document.querySelector('.number').textContent = '?';
   document.querySelector('.guess').value = '';
